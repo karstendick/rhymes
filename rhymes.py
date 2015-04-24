@@ -57,9 +57,9 @@ for last_words_stanza in last_words_stanzas:
         last_syllables.append(last_syllable(last_word))
     last_syllables_stanzas.append(last_syllables)
 
-for lss in last_syllables_stanzas:
+for i,lss in enumerate(last_syllables_stanzas):
     if lss[1] == lss[3]:
-        print("rhyme:", lss[1], lss[3])
+        print("rhyme:", last_words_stanzas[i][1], last_words_stanzas[i][3])
 
 
 print('done')
