@@ -1,24 +1,36 @@
 (ns rhymes.core
   (:require [net.cgrand.enlive-html :as html]
-            [clojure.string :refer [split-lines]]
-            [rhymes.cmudict :as cmudict]))
-
-(def url "http://lyrics.wikia.com/Eminem:My_Name_Is")
+            [clojure.string :as string :refer [split-lines]]
+            [rhymes.cmudict :as cmudict :refer [d]])
+  (:gen-class))
 
 (defn fetch-url [url]
   (html/html-resource (java.net.URL. url)))
 
-(def h (fetch-url url))
+(defn parse-html
+  [html]
+  (-> html
+      (html/select [:div.lyricbox])
+      (html/at [:script] nil)
+      (html/at [:comment] nil)
+      (html/at [:br] #(assoc % :content ["\n"]))))
 
-(def lyricbox (html/select h [:div.lyricbox]))
+(defn fetch-lyrics
+  [artist song]
+  (let [formatted-artist (string/replace artist #" " "_")
+        formatted-song (string/replace song #" " "_")
+        url (format "http://lyrics.wikia.com/%s:%s" formatted-artist formatted-song)
+        lyrics-string (->> url
+                           fetch-url
+                           parse-html
+                           (map html/text)
+                           first)]
+    (-> lyrics-string
+        (string/replace #"\(.*\)" "")
+        split-lines)))
 
-(def lyrics-text (-> lyricbox
-                     (html/at [:script] nil)
-                     (html/at [:comment] nil)
-                     (html/at [:br] #(assoc % :content ["\n"]))))
+; (fetch-lyrics "Eminem" "My Name Is")
 
-(def lyrics (first (map html/text lyrics-text)))
-
-(def lyrics-lines (split-lines lyrics))
-
-
+(defn -main
+  [& args]
+  (println "Hello, World!"))

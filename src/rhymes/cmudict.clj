@@ -12,12 +12,15 @@
     [(first words)
      (into [] (rest words))]))
 
-(defn fs->d
-  [fs]
+(defn lines->dict
+  [lines]
   (reduce (fn [m line]
             (let [[k v] (line->kv line)]
               (assoc m k v)))
           {}
-          fs))
+          lines))
 
-(def d (fs->d fs))
+(def d 
+  (-> (slurp "cmudict/cmudict.dict")
+      split-lines
+      lines->dict))
