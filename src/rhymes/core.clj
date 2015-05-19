@@ -1,7 +1,8 @@
 (ns rhymes.core
   (:require [net.cgrand.enlive-html :as html]
             [clojure.string :as string :refer [split-lines]]
-            [rhymes.cmudict :as cmudict :refer [d]])
+            [rhymes.cmudict :as cmudict :refer [d]]
+            [rhymes.rhyme])
   (:gen-class))
 
 (defn fetch-url [url]
@@ -15,17 +16,23 @@
       (html/at [:comment] nil)
       (html/at [:br] #(assoc % :content ["\n"]))))
 
+(defn- fetch-lyrics-string
+  [url]
+  (->> url
+       fetch-url
+       parse-html
+       (map html/text)
+       first))
+
+; TODO: lowercase all letters and remove punctuation
+
 (defn fetch-lyrics
   [artist song]
   (let [formatted-artist (string/replace artist #" " "_")
         formatted-song (string/replace song #" " "_")
-        url (format "http://lyrics.wikia.com/%s:%s" formatted-artist formatted-song)
-        lyrics-string (->> url
-                           fetch-url
-                           parse-html
-                           (map html/text)
-                           first)]
-    (-> lyrics-string
+        url (format "http://lyrics.wikia.com/%s:%s" formatted-artist formatted-song)]
+    (-> url
+        fetch-lyrics-string
         (string/replace #"\(.*\)" "")
         split-lines)))
 
