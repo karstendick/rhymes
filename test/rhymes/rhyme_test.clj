@@ -19,7 +19,8 @@
               (perfect-rhyme? "cat" "hat") => true
               (perfect-rhyme? "cat" "car") => false
               (perfect-rhyme? "streets" "beets") => true
-              (perfect-rhyme? "streets" "street") => false))
+              (perfect-rhyme? "streets" "street") => false
+              (perfect-rhyme? "prosperous" "dangerous") => true))
 
 (facts "about `slant-rhyme?`"
        (facts "works"

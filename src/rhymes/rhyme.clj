@@ -28,6 +28,7 @@
     (= (subvec p1 idx1)
        (subvec p2 idx2))))
 
+; a.k.a. assonance
 (defn slant-rhyme?
   [w1 w2]
   (let [p1 (get d w1)
