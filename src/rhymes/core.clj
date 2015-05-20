@@ -30,16 +30,21 @@
       ; remove everything between parens
       (string/replace #"\(.*\)" "")
       string/lower-case
-      ; remove punctuation
+      ; remove punctuation, except single quote
       (string/replace #"[^a-z '\n]" "")
       ; remove double spaces
       (string/replace #" +" " ")))
 
-(defn lyrics-string->lyrics
+(defn string->words
+  [s]
+  (string/split s #"\s+"))
+
+(defn lyrics-string->lyrics-words
   [s]
   (->> s
        split-lines
-       (map string/trim)))
+       (mapv string/trim)
+       (mapv string->words)))
 
 (defn fetch-lyrics
   [artist song]
@@ -49,12 +54,11 @@
     (-> url
         fetch-lyrics-string
         clean-lyrics-string
-        lyrics-string->lyrics)))
+        lyrics-string->lyrics-words)))
 
 (defn- lyric-line->phones
   [lyric-line]
-  (let [words (string/split lyric-line #"\s+")]
-    (mapv (partial get d) words)))
+  (mapv (partial get d) lyric-line))
 
 (defn lyrics->phones
   "lyrics is a vector of strings"
@@ -65,4 +69,6 @@
 
 (defn -main
   [& args]
-  (println "Hello, World!"))
+  (let [l (fetch-lyrics "Eminem" "My Name Is")
+        p (lyrics->phones l)]
+    (println l)))
