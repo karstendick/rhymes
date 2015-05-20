@@ -5,10 +5,10 @@
             [rhymes.rhyme])
   (:gen-class))
 
-(defn fetch-url [url]
+(defn- fetch-url [url]
   (html/html-resource (java.net.URL. url)))
 
-(defn parse-html
+(defn- parse-html
   [html]
   (-> html
       (html/select [:div.lyricbox])
@@ -24,17 +24,37 @@
        (map html/text)
        first))
 
-; TODO: lowercase all letters and remove punctuation
+(defn- clean-lyrics-string
+  [s]
+  (-> s
+      ; remove everything between parens
+      (string/replace #"\(.*\)" "")
+      string/lower-case
+      ; remove punctuation
+      (string/replace #"[^a-z '\n]" "")
+      ; remove double spaces
+      (string/replace #" +" " ")))
 
 (defn fetch-lyrics
   [artist song]
   (let [formatted-artist (string/replace artist #" " "_")
         formatted-song (string/replace song #" " "_")
         url (format "http://lyrics.wikia.com/%s:%s" formatted-artist formatted-song)]
-    (-> url
-        fetch-lyrics-string
-        (string/replace #"\(.*\)" "")
-        split-lines)))
+    (->> url
+         fetch-lyrics-string
+         clean-lyrics-string
+         split-lines
+         (map string/trim))))
+
+(defn- lyric-line->phones
+  [lyric-line]
+  (let [words (string/split lyric-line #"\s+")]
+    (mapv (partial get d) words)))
+
+(defn lyrics->phones
+  "lyrics is a vector of strings"
+  [lyrics]
+  (mapv lyric-line->phones lyrics))
 
 ; (fetch-lyrics "Eminem" "My Name Is")
 
