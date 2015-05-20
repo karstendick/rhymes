@@ -24,7 +24,7 @@
        (map html/text)
        first))
 
-(defn- clean-lyrics-string
+(defn clean-lyrics-string
   [s]
   (-> s
       ; remove everything between parens
@@ -35,16 +35,21 @@
       ; remove double spaces
       (string/replace #" +" " ")))
 
+(defn lyrics-string->lyrics
+  [s]
+  (->> s
+       split-lines
+       (map string/trim)))
+
 (defn fetch-lyrics
   [artist song]
   (let [formatted-artist (string/replace artist #" " "_")
         formatted-song (string/replace song #" " "_")
         url (format "http://lyrics.wikia.com/%s:%s" formatted-artist formatted-song)]
-    (->> url
-         fetch-lyrics-string
-         clean-lyrics-string
-         split-lines
-         (map string/trim))))
+    (-> url
+        fetch-lyrics-string
+        clean-lyrics-string
+        lyrics-string->lyrics)))
 
 (defn- lyric-line->phones
   [lyric-line]
