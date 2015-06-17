@@ -13,27 +13,35 @@
         indexed-vowels (filter #(vowel? (second %)) indexed-phones)]
     (first (last indexed-vowels))))
 
+(defn last-syllable
+  "Get all the phones from the last vowel to the end of the word."
+  [word]
+  (let [p (get d word)
+        idx (last-vowel-index word)]
+    (subvec p idx)))
+
+(defn last-vowel
+  [word]
+  (let [p (get d word)
+        idx (last-vowel-index word)]
+    (get p idx)))
+
+(defn first-phone
+  [word]
+  (get-in d [word 0]))
+
 (defn alliteration?
   [w1 w2]
-  (let [first-phone1 (get-in d [w1 0])
-        first-phone2 (get-in d [w2 0])]
+  (let [[first-phone1 first-phone2] (map first-phone [w1 w2])]
     (= first-phone1 first-phone2)))
 
 (defn perfect-rhyme?
   [w1 w2]
-  (let [p1 (get d w1)
-        p2 (get d w2)
-        idx1 (last-vowel-index w1)
-        idx2 (last-vowel-index w2)]
-    (= (subvec p1 idx1)
-       (subvec p2 idx2))))
+  (let [[syllable1 syllable2] (map last-syllable [w1 w2])]
+    (= syllable1 syllable2)))
 
 ; a.k.a. assonance
 (defn slant-rhyme?
   [w1 w2]
-  (let [p1 (get d w1)
-        p2 (get d w2)
-        idx1 (last-vowel-index w1)
-        idx2 (last-vowel-index w2)]
-    (= (get p1 idx1)
-       (get p2 idx2))))
+  (let [[last-vowel1 last-vowel2] (map last-vowel [w1 w2])]
+    (= last-vowel1 last-vowel2)))
