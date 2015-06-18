@@ -37,8 +37,8 @@
 
 (defn perfect-rhyme?
   [w1 w2]
-  (let [[syllable1 syllable2] (map last-syllable [w1 w2])]
-    (= syllable1 syllable2)))
+  (let [[last-syllable1 last-syllable2] (map last-syllable [w1 w2])]
+    (= last-syllable1 last-syllable2)))
 
 ; a.k.a. assonance
 (defn slant-rhyme?
