@@ -30,18 +30,20 @@
   [word]
   (get-in d [word 0]))
 
+(defn apply-equals?
+  [f x y]
+  (= (f x)
+     (f y)))
+
 (defn alliteration?
   [w1 w2]
-  (let [[first-phone1 first-phone2] (map first-phone [w1 w2])]
-    (= first-phone1 first-phone2)))
+  (apply-equals? first-phone w1 w2))
 
 (defn perfect-rhyme?
   [w1 w2]
-  (let [[last-syllable1 last-syllable2] (map last-syllable [w1 w2])]
-    (= last-syllable1 last-syllable2)))
+  (apply-equals? last-syllable w1 w2))
 
 ; a.k.a. assonance
 (defn slant-rhyme?
   [w1 w2]
-  (let [[last-vowel1 last-vowel2] (map last-vowel [w1 w2])]
-    (= last-vowel1 last-vowel2)))
+  (apply-equals? last-vowel w1 w2))
