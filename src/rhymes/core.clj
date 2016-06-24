@@ -2,7 +2,7 @@
   (:require [rhymes.cmudict :as cmudict :refer [d]]
             [rhymes.lyrics :refer [fetch-lyrics
                                    lyrics->phones]]
-            [rhymes.rhyme])
+            [rhymes.rhyme :refer :all])
   (:gen-class))
 
 
